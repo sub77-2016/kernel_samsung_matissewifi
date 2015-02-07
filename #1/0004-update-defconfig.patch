@@ -1,0 +1,26 @@
+From 3e693a82afcb4bac74d469430d145a2a8757b0a5 Mon Sep 17 00:00:00 2001
+From: k2wl <k2wl@github.com>
+Date: Sun, 12 Oct 2014 13:17:22 +0530
+Subject: [PATCH 04/15] update defconfig
+
+Change-Id: I4ce394ee1460b4939d6b13734f386e51c6d52497
+---
+ arch/arm/configs/cyanogen_ms013g_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/configs/cyanogen_ms013g_defconfig b/arch/arm/configs/cyanogen_ms013g_defconfig
+index b8e7a7b..6daa4cd 100644
+--- a/arch/arm/configs/cyanogen_ms013g_defconfig
++++ b/arch/arm/configs/cyanogen_ms013g_defconfig
+@@ -3310,7 +3310,7 @@ CONFIG_USB_CI13XXX_MSM=y
+ CONFIG_USB_G_ANDROID=y
+ CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE=y
+ # CONFIG_USB_DUN_SUPPORT is not set
+-CONFIG_USB_ANDROID_SAMSUNG_MTP=y
++# CONFIG_USB_ANDROID_SAMSUNG_MTP is not set
+ # CONFIG_USB_ANDROID_SAMSUNG_SIDESYNC is not set
+ # CONFIG_USB_LOCK_SUPPORT_FOR_MDM is not set
+ # CONFIG_USB_NCM_SUPPORT_MTU_CHANGE is not set
+-- 
+1.9.1
+

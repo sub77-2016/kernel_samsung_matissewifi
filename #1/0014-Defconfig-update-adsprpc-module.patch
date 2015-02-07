@@ -1,0 +1,26 @@
+From 571e76ea277dce2fb3caac3750b729d808541162 Mon Sep 17 00:00:00 2001
+From: k2wl <k2wl@github.com>
+Date: Fri, 24 Oct 2014 19:18:57 +0530
+Subject: [PATCH 14/15] Defconfig:update adsprpc module
+
+Change-Id: I4deee18c516ffd517cfc73ec40332f7ed92fd88c
+---
+ arch/arm/configs/cyanogen_ms013g_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/configs/cyanogen_ms013g_defconfig b/arch/arm/configs/cyanogen_ms013g_defconfig
+index 76a2487..d937bf8 100644
+--- a/arch/arm/configs/cyanogen_ms013g_defconfig
++++ b/arch/arm/configs/cyanogen_ms013g_defconfig
+@@ -2030,7 +2030,7 @@ CONFIG_HW_RANDOM_MSM=y
+ # CONFIG_TCG_TPM is not set
+ # CONFIG_DCC_TTY is not set
+ # CONFIG_RAMOOPS is not set
+-CONFIG_MSM_ADSPRPC=m
++CONFIG_MSM_ADSPRPC=y
+ CONFIG_MSM_RDBG=m
+ CONFIG_I2C=y
+ CONFIG_I2C_BOARDINFO=y
+-- 
+1.9.1
+

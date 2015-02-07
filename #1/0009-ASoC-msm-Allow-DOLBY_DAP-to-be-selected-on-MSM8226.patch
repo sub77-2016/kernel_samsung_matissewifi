@@ -1,0 +1,26 @@
+From 96095d2f488cce4fcba6b6b584eacae07abb5944 Mon Sep 17 00:00:00 2001
+From: k2wl <k2wl@github.com>
+Date: Wed, 15 Oct 2014 11:58:12 +0530
+Subject: [PATCH 09/15] ASoC: msm: Allow DOLBY_DAP to be selected on MSM8226
+
+Change-Id: I4c153996096c134479882af262f19872bd17b299
+---
+ sound/soc/msm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/msm/Kconfig b/sound/soc/msm/Kconfig
+index c7f2315..4acbe34 100755
+--- a/sound/soc/msm/Kconfig
++++ b/sound/soc/msm/Kconfig
+@@ -165,7 +165,7 @@ config AUDIO_OCMEM
+ 
+ config DOLBY_DAP
+ 	bool "Enable Dolby DAP"
+-	depends on SND_SOC_MSM8974
++	depends on SND_SOC_MSM8974 || SND_SOC_MSM8226
+ 	help
+ 	 To add support for dolby DAP post processing.
+ 	 This support is to configure the post processing parameters
+-- 
+1.9.1
+

@@ -1,0 +1,27 @@
+From 8ca001f0baa214e15099a9ce405a28e9f569caf0 Mon Sep 17 00:00:00 2001
+From: k2wl <k2wl@github.com>
+Date: Sun, 12 Oct 2014 13:22:10 +0530
+Subject: [PATCH 05/15] update selinux configuration in defconfig
+
+Change-Id: I895257d3e20c87e5b58466dfc45c1cd037d62054
+---
+ arch/arm/configs/cyanogen_ms013g_defconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/configs/cyanogen_ms013g_defconfig b/arch/arm/configs/cyanogen_ms013g_defconfig
+index 6daa4cd..a98a94a 100644
+--- a/arch/arm/configs/cyanogen_ms013g_defconfig
++++ b/arch/arm/configs/cyanogen_ms013g_defconfig
+@@ -4043,7 +4043,8 @@ CONFIG_SECURITY_NETWORK=y
+ # CONFIG_SECURITY_PATH is not set
+ CONFIG_LSM_MMAP_MIN_ADDR=4096
+ CONFIG_SECURITY_SELINUX=y
+-# CONFIG_SECURITY_SELINUX_BOOTPARAM is not set
++CONFIG_SECURITY_SELINUX_BOOTPARAM=y
++CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE=0
+ # CONFIG_SECURITY_SELINUX_DISABLE is not set
+ CONFIG_SECURITY_SELINUX_DEVELOP=y
+ CONFIG_SECURITY_SELINUX_AVC_STATS=y
+-- 
+1.9.1
+

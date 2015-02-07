@@ -1,0 +1,53 @@
+From 48e4ba7f68203920b0a940382b0cd9b0a369cc57 Mon Sep 17 00:00:00 2001
+From: k2wl <k2wl@github.com>
+Date: Tue, 21 Oct 2014 18:12:12 +0530
+Subject: [PATCH 12/15] cfg80211: Add wiphy flag to disable 11D hints
+
+Change-Id: Idfd46cc7c8462fac27b7e3fcbdf49e09a06f1e60
+---
+ include/net/cfg80211.h | 4 ++++
+ net/wireless/reg.c     | 6 ++++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
+index 0133e98..ff9f110 100755
+--- a/include/net/cfg80211.h
++++ b/include/net/cfg80211.h
+@@ -1868,6 +1868,9 @@ struct cfg80211_ops {
+  *	responds to probe-requests in hardware.
+  * @WIPHY_FLAG_OFFCHAN_TX: Device supports direct off-channel TX.
+  * @WIPHY_FLAG_HAS_REMAIN_ON_CHANNEL: Device supports remain-on-channel call.
++ * @WIPHY_FLAG_DISABLE_11D_HINT_FROM_CORE: enable this flag if the driver
++ * does not want the channel flags to be changed by the country IE of the
++ * connected BSS due to a regulatory hint from the core
+  */
+ enum wiphy_flags {
+ 	WIPHY_FLAG_CUSTOM_REGULATORY		= BIT(0),
+@@ -1891,6 +1894,7 @@ enum wiphy_flags {
+ 	WIPHY_FLAG_AP_PROBE_RESP_OFFLOAD	= BIT(19),
+ 	WIPHY_FLAG_OFFCHAN_TX			= BIT(20),
+ 	WIPHY_FLAG_HAS_REMAIN_ON_CHANNEL	= BIT(21),
++	WIPHY_FLAG_DISABLE_11D_HINT_FROM_CORE = BIT(22),
+ };
+ 
+ /**
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 7f1dcb1..85df729 100755
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -1764,6 +1764,12 @@ void regulatory_hint_11d(struct wiphy *wiphy,
+ 	enum environment_cap env = ENVIRON_ANY;
+ 	struct regulatory_request *request;
+ 
++    /* Driver does not want the CORE to change the channel
++    * flags based on the country IE of connected BSS
++    */
++    if (wiphy->flags & WIPHY_FLAG_DISABLE_11D_HINT_FROM_CORE)
++    return;
++
+ 	mutex_lock(&reg_mutex);
+ 
+ 	if (unlikely(!last_request))
+-- 
+1.9.1
+

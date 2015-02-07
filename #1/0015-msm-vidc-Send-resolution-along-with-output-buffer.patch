@@ -1,0 +1,47 @@
+From a5b956d0855eed72a64b5f4665a37041c1358af8 Mon Sep 17 00:00:00 2001
+From: k2wl <k2wl@github.com>
+Date: Sat, 15 Nov 2014 15:32:10 +0530
+Subject: [PATCH 15/15] msm: vidc: Send resolution along with output buffer
+
+Send the resolution along with output buffer to the client
+to avoid a race condition where resolution might be changed
+multiple times in driver before client requests for updated
+resolution.
+
+Change-Id: I8ebb99e3baa04da09f153195a674babcebcfea78
+Signed-off-by: Maheshwar Ajja <majja@codeaurora.org>
+---
+ drivers/media/platform/msm/vidc/msm_vidc_common.c | 4 ++++
+ include/linux/msm_vidc_dec.h                      | 1 +
+ 2 files changed, 5 insertions(+)
+
+diff --git a/drivers/media/platform/msm/vidc/msm_vidc_common.c b/drivers/media/platform/msm/vidc/msm_vidc_common.c
+index 40b9a69..33372c7 100755
+--- a/drivers/media/platform/msm/vidc/msm_vidc_common.c
++++ b/drivers/media/platform/msm/vidc/msm_vidc_common.c
+@@ -1148,6 +1148,10 @@ static void handle_fbd(enum command_response cmd, void *data)
+ 		vb->v4l2_planes[0].reserved[3] = fill_buf_done->start_y_coord;
+ 		vb->v4l2_planes[0].reserved[4] = fill_buf_done->frame_width;
+ 		vb->v4l2_planes[0].reserved[5] = fill_buf_done->frame_height;
++		vb->v4l2_planes[0].reserved[6] =
++			inst->prop.width[CAPTURE_PORT];
++		vb->v4l2_planes[0].reserved[7] =
++			inst->prop.height[CAPTURE_PORT];
+ 		if (vb->v4l2_planes[0].data_offset > vb->v4l2_planes[0].length)
+ 			dprintk(VIDC_INFO,
+ 				"fbd:Overflow data_offset = %d; length = %d\n",
+diff --git a/include/linux/msm_vidc_dec.h b/include/linux/msm_vidc_dec.h
+index 35279bf..9301006 100755
+--- a/include/linux/msm_vidc_dec.h
++++ b/include/linux/msm_vidc_dec.h
+@@ -549,6 +549,7 @@ struct vdec_output_frameinfo {
+ 	enum vdec_picture pic_type;
+ 	void *client_data;
+ 	void *input_frame_clientdata;
++	struct vdec_picsize picsize;
+ 	struct vdec_framesize framesize;
+ 	enum vdec_interlaced_format interlaced_format;
+ 	struct vdec_aspectratioinfo aspect_ratio_info;
+-- 
+1.9.1
+
