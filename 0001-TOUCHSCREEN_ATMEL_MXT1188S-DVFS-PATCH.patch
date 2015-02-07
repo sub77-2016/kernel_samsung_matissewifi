@@ -1,0 +1,155 @@
+From 30b84bcb525952893db146d6b5d50a3650094bc4 Mon Sep 17 00:00:00 2001
+From: sub77 <sub77@ymail.com>
+Date: Sat, 10 Jan 2015 20:00:23 +0100
+Subject: [PATCH 01/10] TOUCHSCREEN_ATMEL_MXT1188S DVFS PATCH
+
+Change-Id: Icadf565f79a6e1901965b88cd3ac8c4c37a53573
+Signed-off-by: sub77 <sub77@ymail.com>
+---
+ drivers/input/touchscreen/mxt1188s/mxts_1188s.c     |  7 ++++++-
+ drivers/input/touchscreen/mxt1188s/mxts_sec_1188s.c | 14 ++++++++++++++
+ 3 files changed, 20 insertions(+), 1 deletions(-)
+
+
+diff --git a/drivers/input/touchscreen/mxt1188s/mxts_1188s.c b/drivers/input/touchscreen/mxt1188s/mxts_1188s.c
+index 3191e46..26e912c 100755
+--- a/drivers/input/touchscreen/mxt1188s/mxts_1188s.c
++++ b/drivers/input/touchscreen/mxt1188s/mxts_1188s.c
+@@ -1069,9 +1069,11 @@ static void mxt_report_input_data(struct mxt_data *data)
+ 			input_sync(data->input_dev);
+ 	}
+ 
++#ifdef CONFIG_SEC_DVFS
+ #if TSP_BOOSTER
+ 	mxt_set_dvfs_lock(data, count);
+ #endif
++#endif
+ 
+ 	data->finger_mask = 0;
+ }
+@@ -2339,10 +2341,11 @@ static int mxt_stop(struct mxt_data *data)
+ #if ENABLE_TOUCH_KEY
+ 	mxt_release_all_keys(data);
+ #endif
++#ifdef CONFIG_SEC_DVFS
+ #if TSP_BOOSTER
+ 	mxt_set_dvfs_lock(data, -1);
+ #endif
+-
++#endif
+ 	data->mxt_enabled = false;
+ 
+ 	return 0;
+@@ -2492,12 +2495,14 @@ static int mxt_touch_finish_init(struct mxt_data *data)
+ 		goto err_req_irq;
+ 	}
+ 
++#ifdef CONFIG_SEC_DVFS
+ #if TSP_BOOSTER
+ 	mxt_init_dvfs(data);
+ #endif
+ #if MXT_TKEY_BOOSTER
+ 	mxt_tkey_init_dvfs(data);
+ #endif
++#endif
+ 
+ 	dev_info(&client->dev,  "Mxt touch controller initialized\n");
+ 
+diff --git a/drivers/input/touchscreen/mxt1188s/mxts_sec_1188s.c b/drivers/input/touchscreen/mxt1188s/mxts_sec_1188s.c
+index 4ffe6d1..a44f8dd 100755
+--- a/drivers/input/touchscreen/mxt1188s/mxts_sec_1188s.c
++++ b/drivers/input/touchscreen/mxt1188s/mxts_sec_1188s.c
+@@ -1554,6 +1554,7 @@ struct tsp_cmd {
+ 	void			(*cmd_func)(void *device_data);
+ };
+ 
++#ifdef CONFIG_SEC_DVFS
+ #if TSP_BOOSTER
+ static void boost_level(void *device_data)
+ {
+@@ -1599,6 +1600,7 @@ static void boost_level(void *device_data)
+ 	return;
+ }
+ #endif
++#endif
+ 
+ static struct tsp_cmd tsp_cmds[] = {
+ 	{TSP_CMD("fw_update", fw_update),},
+@@ -1629,9 +1631,11 @@ static struct tsp_cmd tsp_cmds[] = {
+ 	{TSP_CMD("set_tk_threshold", set_tk_threshold),},
+ #endif
+ #endif
++#ifdef CONFIG_SEC_DVFS
+ #if TSP_BOOSTER
+ 	{TSP_CMD("boost_level", boost_level),},
+ #endif
++#endif
+ #if TSP_PATCH
+ 	{TSP_CMD("patch_update", patch_update),},
+ #endif
+@@ -2038,6 +2042,7 @@ static ssize_t touchkey_report_dummy_key_store(struct device *dev,
+ 	return size;
+ }
+ 
++#ifdef CONFIG_SEC_DVFS
+ #if MXT_TKEY_BOOSTER
+ static ssize_t boost_level_store(struct device *dev,
+ 				   struct device_attribute *attr,
+@@ -2082,6 +2087,7 @@ static ssize_t boost_level_store(struct device *dev,
+ 	return count;
+ }
+ #endif
++#endif
+ 
+ static DEVICE_ATTR(touchkey_d_menu, S_IRUGO | S_IWUSR | S_IWGRP, touchkey_d_menu_show, NULL);
+ static DEVICE_ATTR(touchkey_d_back, S_IRUGO | S_IWUSR | S_IWGRP, touchkey_d_back_show, NULL);
+@@ -2091,9 +2097,11 @@ static DEVICE_ATTR(touchkey_threshold, S_IRUGO | S_IWUSR | S_IWGRP, get_touchkey
+ static DEVICE_ATTR(brightness, S_IRUGO | S_IWUSR | S_IWGRP, NULL, touchkey_led_control);
+ static DEVICE_ATTR(extra_button_event, S_IRUGO | S_IWUSR | S_IWGRP,
+ 					touchkey_report_dummy_key_show, touchkey_report_dummy_key_store);
++#ifdef CONFIG_SEC_DVFS
+ #if MXT_TKEY_BOOSTER
+ static DEVICE_ATTR(boost_level, S_IWUSR | S_IWGRP, NULL, boost_level_store);
+ #endif
++#endif
+ 
+ static struct attribute *touchkey_attributes[] = {
+ 	&dev_attr_touchkey_d_menu.attr,
+@@ -2103,9 +2111,11 @@ static struct attribute *touchkey_attributes[] = {
+ 	&dev_attr_touchkey_threshold.attr,
+ 	&dev_attr_brightness.attr,
+ 	&dev_attr_extra_button_event.attr,
++#ifdef CONFIG_SEC_DVFS
+ #if MXT_TKEY_BOOSTER
+ 	&dev_attr_boost_level.attr,
+ #endif
++#endif
+ 	NULL,
+ };
+ 
+@@ -2736,6 +2746,7 @@ static void  mxt_sysfs_remove(struct mxt_data *data)
+ #endif
+ }
+ 
++#ifdef CONFIG_SEC_DVFS
+ #if TSP_BOOSTER
+ static void mxt_change_dvfs_lock(struct work_struct *work)
+ {
+@@ -2860,6 +2871,8 @@ void mxt_init_dvfs(struct mxt_data *data)
+ 	data->dvfs_lock_status = false;
+ }
+ #endif
++#endif
++#ifdef CONFIG_SEC_DVFS
+ #if MXT_TKEY_BOOSTER
+ static void mxt_tkey_change_dvfs_lock(struct work_struct *work)
+ {
+@@ -2949,3 +2962,4 @@ void mxt_tkey_init_dvfs(struct mxt_data *data)
+ 	data->tkey_dvfs_lock_status = true;
+ }
+ #endif
++#endif
+\ No newline at end of file
+-- 
+1.9.1
+
