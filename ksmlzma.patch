@@ -1,0 +1,34 @@
+From bf9ba46c6e235e79e7d4e41ef22c3c044a5bd2c0 Mon Sep 17 00:00:00 2001
+From: Rox- <r.rozic97@gmail.com>
+Date: Fri, 26 Dec 2014 17:31:41 +0100
+Subject: [PATCH] ms013g: Use LZO compression and enable KSM
+
+Signed-off-by: Rox- <r.rozic97@gmail.com>
+---
+ arch/arm/configs/msm8226-sec_defconfig | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/configs/msm8226-sec_defconfig b/arch/arm/configs/msm8226-sec_defconfig
+index d30d360..5af022b 100755
+--- a/arch/arm/configs/msm8226-sec_defconfig
++++ b/arch/arm/configs/msm8226-sec_defconfig
+@@ -84,6 +84,7 @@ CONFIG_PREEMPT=y
+ CONFIG_AEABI=y
+ CONFIG_HIGHMEM=y
+ CONFIG_COMPACTION=y
++CONFIG_KSM=y
+ CONFIG_ENABLE_VMALLOC_SAVING=y
+ CONFIG_CC_STACKPROTECTOR=y
+ CONFIG_CP_ACCESS=y
+@@ -588,6 +589,11 @@ CONFIG_SEC_MONITOR_BATTERY_REMOVAL=y
+ CONFIG_CHECK_SIMSLOT_COUNT=y
+ CONFIG_CHECK_SIMSLOT_COUNT_GPIO=66
+ 
++# Compression
++#
++# CONFIG_KERNEL_GZIP is not set
++CONFIG_KERNEL_LZO=y
++
+ #
+ # IO Schedulers
+ #
