@@ -1,0 +1,11 @@
+--- drivers/video/msm/mdss/mdss_sharp_hd_dsi_panel.c
++++ drivers/video/msm/mdss/mdss_sharp_hd_dsi_panel.c
+@@ -1292,7 +1292,7 @@
+ {
+ 	int rc;
+ 
+-	rc = snprintf(buf, sizeof(buf), "%d\n",
++	rc = sprintf(buf, "%d\n",
+ 					msd.dstat.auto_brightness);
+ 	pr_info("%s : auto_brightness : %d\n", __func__, msd.dstat.auto_brightness);
+ 
