@@ -1,0 +1,23 @@
+From d0876d072356d6599c3f3dacd18dfbdbeb000806 Mon Sep 17 00:00:00 2001
+From: Robert Rozic <r.rozic97@gmail.com>
+Date: Sun, 30 Nov 2014 22:51:25 +0100
+Subject: [PATCH] qpnp-sec-charger: Return 0 when no cable inserted
+
+Thanks @arco
+---
+ drivers/power/qpnp-sec-charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/power/qpnp-sec-charger.c b/drivers/power/qpnp-sec-charger.c
+index 5d4d5e6..7389748 100755
+--- a/drivers/power/qpnp-sec-charger.c
++++ b/drivers/power/qpnp-sec-charger.c
+@@ -2987,7 +2987,7 @@ qpnp_batt_power_get_property(struct power_supply *psy,
+ 	case POWER_SUPPLY_PROP_ONLINE:
+ 		switch (chip->cable_type) {
+ 		case CABLE_TYPE_NONE:
+-			val->intval = POWER_SUPPLY_TYPE_BATTERY;
++			val->intval = 0;
+ 			break;
+ 		case CABLE_TYPE_USB:
+ 			val->intval = POWER_SUPPLY_TYPE_USB;

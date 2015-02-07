@@ -1,0 +1,50 @@
+From 1233a56ddb12d736081bbb2092c5bed296555dcf Mon Sep 17 00:00:00 2001
+From: Justin Philip <jphili@codeaurora.org>
+Date: Tue, 12 Aug 2014 13:46:54 +0530
+Subject: [PATCH] mdss: Add MDP_SMP_FORCE_ALLOC mdp flag
+
+MDP_SMP_FORCE_ALLOC flag is used to allow SMP
+allocations even when there is mismatch between
+allocated and requested SMPs for a pipe.
+User space can make use of this flag in extreme scenarios
+where SMP allocations need to pass like GPU composition
+and playback of protected  or secure videos.
+
+Change-Id: I369b4361e7e2bbfc8150add467678c4ef8d5cfb6
+Signed-off-by: Justin Philip <jphili@codeaurora.org>
+---
+ drivers/video/msm/mdss/mdss_mdp_pipe.c | 8 +-------
+ include/linux/msm_mdp.h                | 1 +
+ 2 files changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/video/msm/mdss/mdss_mdp_pipe.c b/drivers/video/msm/mdss/mdss_mdp_pipe.c
+index 0ba8419..8a708f6 100644
+--- a/drivers/video/msm/mdss/mdss_mdp_pipe.c
++++ b/drivers/video/msm/mdss/mdss_mdp_pipe.c
+@@ -253,13 +253,7 @@ int mdss_mdp_smp_reserve(struct mdss_mdp_pipe *pipe)
+ 		wb_mixer = 1;
+ #endif
+ 
+-	/*
+-	 * Don't want to allow SMP changes for backend composition pipes
+-	 * inorder to preserve SMPs as much as possible.
+-	 * On the contrary for non backend composition pipes we should
+-	 * allow SMP allocations to prevent composition failures.
+-	 */
+-	force_alloc = !(pipe->flags & MDP_BACKEND_COMPOSITION);
++	force_alloc = pipe->flags & MDP_SMP_FORCE_ALLOC;
+ 
+ 	mutex_lock(&mdss_mdp_smp_lock);
+ 	if (pipe->src_fmt->is_yuv || (pipe->flags & MDP_BACKEND_COMPOSITION)) {
+diff --git a/include/linux/msm_mdp.h b/include/linux/msm_mdp.h
+index de9f4bb..d9eec64 100644
+--- a/include/linux/msm_mdp.h
++++ b/include/linux/msm_mdp.h
+@@ -195,6 +195,7 @@ enum {
+ #define MDP_MEMORY_ID_TYPE_FB		0x00001000
+ #define MDP_BWC_EN			0x00000400
+ #define MDP_DECIMATION_EN		0x00000800
++#define MDP_SMP_FORCE_ALLOC            0x00200000
+ #define MDP_TRANSP_NOP 0xffffffff
+ #define MDP_ALPHA_NOP 0xff
+ 

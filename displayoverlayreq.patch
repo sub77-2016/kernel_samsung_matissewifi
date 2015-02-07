@@ -1,0 +1,104 @@
+From 25f2b604cb5766ddb100819d219ec04511722f00 Mon Sep 17 00:00:00 2001
+From: Vineet Bajaj <vbajaj@codeaurora.org>
+Date: Tue, 10 Jun 2014 21:10:24 +0530
+Subject: [PATCH] msm: display: Add pipe type selection in overlay request
+
+Allow user to specify the type when requesting an overlay pipe.
+If field is set the pipe type indication in the flags will be
+ignored.
+Change-Id: Iee51d24b96c7a2a987dc70a439342e6548dfc8fa
+Signed-off-by: Vineet Bajaj <vbajaj@codeaurora.org>
+---
+ drivers/video/msm/mdss/mdss_mdp_overlay.c | 30 +++++++++++++++++++++++-------
+ include/linux/msm_mdp.h                   | 19 +++++++++++++++++++
+ 2 files changed, 42 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/video/msm/mdss/mdss_mdp_overlay.c b/drivers/video/msm/mdss/mdss_mdp_overlay.c
+index 9d2ac28..fdd1567 100644
+--- a/drivers/video/msm/mdss/mdss_mdp_overlay.c
++++ b/drivers/video/msm/mdss/mdss_mdp_overlay.c
+@@ -395,17 +395,33 @@ static int mdss_mdp_overlay_pipe_setup(struct msm_fb_data_type *mfd,
+ 	}
+ 
+ 	if (req->id == MSMFB_NEW_REQUEST) {
+-		if (req->flags & MDP_OV_PIPE_FORCE_DMA)
+-			pipe_type = MDSS_MDP_PIPE_TYPE_DMA;
+-		else if (fmt->is_yuv || (req->flags & MDP_OV_PIPE_SHARE))
+-			pipe_type = MDSS_MDP_PIPE_TYPE_VIG;
+-		else
+-			pipe_type = MDSS_MDP_PIPE_TYPE_RGB;
++		switch (req->pipe_type) {
++                case PIPE_TYPE_VIG:
++                        pipe_type = MDSS_MDP_PIPE_TYPE_VIG;
++                        break;
++                case PIPE_TYPE_RGB:
++                        pipe_type = MDSS_MDP_PIPE_TYPE_RGB;
++                        break;
++                case PIPE_TYPE_DMA:
++                        pipe_type = MDSS_MDP_PIPE_TYPE_DMA;
++                        break;
++                case PIPE_TYPE_AUTO:
++                default:
++                        if (req->flags & MDP_OV_PIPE_FORCE_DMA)
++                                pipe_type = MDSS_MDP_PIPE_TYPE_DMA;
++                        else if (fmt->is_yuv ||
++                                (req->flags & MDP_OV_PIPE_SHARE))
++                                pipe_type = MDSS_MDP_PIPE_TYPE_VIG;
++                        else
++                                pipe_type = MDSS_MDP_PIPE_TYPE_RGB;
++                        break;
++                }
+ 
+ 		pipe = mdss_mdp_pipe_alloc(mixer, pipe_type);
+ 
+ 		/* VIG pipes can also support RGB format */
+-		if (!pipe && pipe_type == MDSS_MDP_PIPE_TYPE_RGB) {
++		if ((req->pipe_type == PIPE_TYPE_AUTO) && !pipe &&
++			(pipe_type == MDSS_MDP_PIPE_TYPE_RGB)) {
+ 			pipe_type = MDSS_MDP_PIPE_TYPE_VIG;
+ 			pipe = mdss_mdp_pipe_alloc(mixer, pipe_type);
+ 		}
+diff --git a/include/linux/msm_mdp.h b/include/linux/msm_mdp.h
+index bc6a88a..de9f4bb 100644
+--- a/include/linux/msm_mdp.h
++++ b/include/linux/msm_mdp.h
+@@ -530,6 +530,23 @@ struct mdp_scale_data {
+ };
+ 
+ /**
++ * enum mdp_overlay_pipe_type - Different pipe type set by userspace
++ *
++ * @PIPE_TYPE_AUTO:    Not specified, pipe will be selected according to flags.
++ * @PIPE_TYPE_VIG:     VIG pipe.
++ * @PIPE_TYPE_RGB:     RGB pipe.
++ * @PIPE_TYPE_DMA:     DMA pipe.
++ * @PIPE_TYPE_MAX:     Used to track maximum number of pipe type.
++ */
++enum mdp_overlay_pipe_type {
++        PIPE_TYPE_AUTO = 0,
++        PIPE_TYPE_VIG,
++        PIPE_TYPE_RGB,
++        PIPE_TYPE_DMA,
++        PIPE_TYPE_MAX,
++};
++
++/**
+  * struct mdp_overlay - overlay surface structure
+  * @src:	Source image information (width, height, format).
+  * @src_rect:	Source crop rectangle, portion of image that will be fetched.
+@@ -551,6 +568,7 @@ struct mdp_scale_data {
+  *		The color should be in same format as the source image format.
+  * @flags:	This is used to customize operation of overlay. See MDP flags
+  *		for more information.
++ * @pipe_type:  Used to specify the type of overlay pipe.
+  * @user_data:	DEPRECATED* Used to store user application specific information.
+  * @bg_color:	Solid color used to fill the overlay surface when no source
+  *		buffer is provided.
+@@ -583,6 +601,7 @@ struct mdp_overlay {
+ 	uint32_t blend_op;
+ 	uint32_t transp_mask;
+ 	uint32_t flags;
++	uint32_t pipe_type;
+ 	uint32_t id;
+ 	uint32_t user_data[6];
+ 	uint32_t bg_color;

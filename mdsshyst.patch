@@ -1,0 +1,34 @@
+From fab600fb6d34a242c661e27d94fa1fb887472cb1 Mon Sep 17 00:00:00 2001
+From: Krishna Chaitanya Parimi <cparimi@codeaurora.org>
+Date: Thu, 8 May 2014 13:53:17 +0530
+Subject: [PATCH] ARM: dts: mdss: Increase MDSS clock hysteresis cycles for
+ msm8226
+
+Increasing the number of cycles of MDSS clocks to stay active for
+an additional 32 cycles before gated off.
+
+Change-Id: Ia98b9d98ca59fd7bed408c775d8f58d35e6df5bb
+Signed-off-by: Krishna Chaitanya Parimi <cparimi@codeaurora.org>
+---
+ arch/arm/boot/dts/msm8226-mdss.dtsi | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/msm8226-mdss.dtsi b/arch/arm/boot/dts/msm8226-mdss.dtsi
+index 3304df2..ecd1f9d 100755
+--- a/arch/arm/boot/dts/msm8226-mdss.dtsi
++++ b/arch/arm/boot/dts/msm8226-mdss.dtsi
+@@ -47,7 +47,13 @@
+ 				     <0x124 0x00000003>,
+ 				     <0x0C0 0x02101010>;
+ 		qcom,mdp-settings = <0x02E0 0x000000A5>,
+-				    <0x02E4 0x00000055>;
++				    <0x02E4 0x00000055>,
++				    <0x03AC 0xC0000CCC>,
++				    <0x03B4 0xC0000000>,
++				    <0x03BC 0x00C00C00>,
++				    <0x04A8 0x0CCCC000>,
++				    <0x04B0 0xC0000000>,
++				    <0x04B8 0xC0000000>;
+ 
+ 		mdss_fb0: qcom,mdss_fb_primary {
+ 			cell-index = <0>;

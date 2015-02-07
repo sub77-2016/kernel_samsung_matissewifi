@@ -1,0 +1,27 @@
+From ec312f315d9bb2b4ad59f6b83cad189ff04bfabf Mon Sep 17 00:00:00 2001
+From: Naseer Ahmed <naseer@codeaurora.org>
+Date: Tue, 11 Mar 2014 19:42:44 -0400
+Subject: [PATCH] mdss: Add newline to VSYNC timestamp
+
+This makes sure that the userspace correctly interprets the end
+of the vsync timestamp.
+
+Change-Id: I66f9939658b6fb7531468429c1ca3e551a4a285c
+Signed-off-by: Naseer Ahmed <naseer@codeaurora.org>
+---
+ drivers/video/msm/mdss/mdss_mdp_overlay.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/video/msm/mdss/mdss_mdp_overlay.c b/drivers/video/msm/mdss/mdss_mdp_overlay.c
+index 393a923..1938cd6 100644
+--- a/drivers/video/msm/mdss/mdss_mdp_overlay.c
++++ b/drivers/video/msm/mdss/mdss_mdp_overlay.c
+@@ -1856,7 +1856,7 @@ static ssize_t mdss_mdp_vsync_show_event(struct device *dev,
+ 	vsync_ticks = ktime_to_ns(mdp5_data->vsync_time);
+ 
+ 	pr_debug("fb%d vsync=%llu", mfd->index, vsync_ticks);
+-	ret = scnprintf(buf, PAGE_SIZE, "VSYNC=%llu", vsync_ticks);
++	ret = scnprintf(buf, PAGE_SIZE, "VSYNC=%llu\n", vsync_ticks);
+ 
+ 	return ret;
+ }

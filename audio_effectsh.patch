@@ -1,0 +1,23 @@
+From 9daf2d45c5b882de0460ceb5f615a6c812ab695c Mon Sep 17 00:00:00 2001
+From: Robert Rozic <r.rozic97@gmail.com>
+Date: Fri, 3 Oct 2014 17:04:35 +0200
+Subject: [PATCH] include/sound: Export audio_effects.h header file
+
+Needed to build libqcompostprocbundle and libqcomvisualizer
+Thanks @percy-g2
+---
+ include/sound/Kbuild | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/sound/Kbuild b/include/sound/Kbuild
+index 60847b0..1a67eac 100644
+--- a/include/sound/Kbuild
++++ b/include/sound/Kbuild
+@@ -1,6 +1,7 @@
+ header-y += asequencer.h
+ header-y += asound.h
+ header-y += asound_fm.h
++header-y += audio_effects.h
+ header-y += emu10k1.h
+ header-y += hdsp.h
+ header-y += hdspm.h

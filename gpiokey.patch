@@ -1,0 +1,83 @@
+From 695a502a5e128098257b72c45d7ebee15f5e1912 Mon Sep 17 00:00:00 2001
+From: Rox- <r.rozic97@gmail.com>
+Date: Fri, 26 Dec 2014 18:27:31 +0100
+Subject: [PATCH] input: gpio-keys: Fix build when DVFS is disabled
+
+Signed-off-by: Rox- <r.rozic97@gmail.com>
+---
+ drivers/input/keyboard/gpio_keys.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 29cacf8..830911d 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -68,12 +68,14 @@ struct gpio_button_data {
+ 	spinlock_t lock;
+ 	bool disabled;
+ 	bool key_pressed;
++	#ifdef CONFIG_SEC_DVFS
+ 	#ifdef KEY_BOOSTER
+ 	struct delayed_work	work_dvfs_off;
+ 	struct delayed_work	work_dvfs_chg;
+ 	bool dvfs_lock_status;
+ 	struct mutex		dvfs_lock;
+ 	#endif
++	#endif
+ };
+ 
+ struct gpio_keys_drvdata {
+@@ -423,6 +425,7 @@ static struct attribute_group gpio_keys_attr_group = {
+ 	.attrs = gpio_keys_attrs,
+ };
+ 
++#ifdef CONFIG_SEC_DVFS
+ #ifdef KEY_BOOSTER
+ static void gpio_key_change_dvfs_lock(struct work_struct *work)
+ {
+@@ -496,6 +499,7 @@ static int gpio_key_init_dvfs(struct gpio_button_data *bdata)
+ 	return 0;
+ }
+ #endif
++#endif
+ 
+ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
+ {
+@@ -523,17 +527,21 @@ static void gpio_keys_gpio_work_func(struct work_struct *work)
+ {
+ 	struct gpio_button_data *bdata =
+ 		container_of(work, struct gpio_button_data, work);
++#ifdef CONFIG_SEC_DVFS
+ #ifdef KEY_BOOSTER
+ 	const struct gpio_keys_button *button = bdata->button;
+ 	int state = (gpio_get_value_cansleep(button->gpio) ? 1 : 0) ^ button->active_low;
+ #endif
++#endif
+ 	gpio_keys_gpio_report_event(bdata);
++#ifdef CONFIG_SEC_DVFS
+ #ifdef KEY_BOOSTER
+ 	if (button->code == KEY_HOMEPAGE)
+ 	{
+ 		gpio_key_set_dvfs_lock(bdata, !!state);
+ 	}
+ #endif
++#endif
+ }
+ 
+ static void gpio_keys_gpio_timer(unsigned long _data)
+@@ -1310,6 +1318,7 @@ static int __devinit gpio_keys_probe(struct platform_device *pdev)
+ 		error = gpio_keys_setup_key(pdev, input, bdata, button);
+ 		if (error)
+ 			goto fail2;
++#ifdef CONFIG_SEC_DVFS
+ #ifdef KEY_BOOSTER
+ 		error = gpio_key_init_dvfs(bdata);
+ 		if (error < 0) {
+@@ -1317,6 +1326,7 @@ static int __devinit gpio_keys_probe(struct platform_device *pdev)
+ 			goto fail2;
+ 		}
+ #endif
++#endif
+ 		if (button->wakeup)
+ 			wakeup = 1;
+ 	}

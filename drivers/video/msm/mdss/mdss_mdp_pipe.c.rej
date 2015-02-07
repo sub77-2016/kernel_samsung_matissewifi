@@ -1,0 +1,17 @@
+--- drivers/video/msm/mdss/mdss_mdp_pipe.c
++++ drivers/video/msm/mdss/mdss_mdp_pipe.c
+@@ -253,13 +253,7 @@
+ 		wb_mixer = 1;
+ #endif
+ 
+-	/*
+-	 * Don't want to allow SMP changes for backend composition pipes
+-	 * inorder to preserve SMPs as much as possible.
+-	 * On the contrary for non backend composition pipes we should
+-	 * allow SMP allocations to prevent composition failures.
+-	 */
+-	force_alloc = !(pipe->flags & MDP_BACKEND_COMPOSITION);
++	force_alloc = pipe->flags & MDP_SMP_FORCE_ALLOC;
+ 
+ 	mutex_lock(&mdss_mdp_smp_lock);
+ 	if (pipe->src_fmt->is_yuv || (pipe->flags & MDP_BACKEND_COMPOSITION)) {
