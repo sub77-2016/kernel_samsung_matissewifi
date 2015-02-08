@@ -503,7 +503,7 @@ CONFIG_KEYS_DEBUG_PROC_KEYS=y
 #
 # CONFIG_KERNEL_GZIP is not set
 CONFIG_KERNEL_LZO=y
-
+#CONFIG_KERNEL_LZMA=y
 #
 # Bluetooth deconfig
 #
